@@ -52,7 +52,7 @@ ui_str = """
 </ui>
 """
 
-class RatingFilters (GObject.Object, Peas.Activatable):
+class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 	'''
 	Main class for the RatingFilters plugin. Contains functions for setting up the UI, callbacks for user actions, and functions for filtering query models and refreshing the display.
 	'''

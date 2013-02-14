@@ -12,4 +12,5 @@ cp -r "${SCRIPT_PATH}"* "$PLUGIN_PATH"
 rm "${PLUGIN_PATH}${SCRIPT_NAME}"
 sudo cp "${PLUGIN_PATH}${GLIB_SCHEME}" "${GLIB_PATH}"
 rm "${PLUGIN_PATH}${GLIB_SCHEME}"
+
 sudo glib-compile-schemas "$GLIB_PATH"

@@ -11,8 +11,10 @@ Rating filters for the Rhythmbox library browser.
 
 === Usage ===
 
-To install, run the 'install.sh' file or copy the 'RatingFitlers' directory and 
-its contents to ~/.local/share/rhythmbox/plugins/.
+To install, run 'install.sh' or copy the contents of the archive to 
+~/.local/share/rhythmbox/plugins/RatingFilters/.
+
+You can set a custom favourites threshold in the plugin preferences.
 
 
 === Thanks ===
