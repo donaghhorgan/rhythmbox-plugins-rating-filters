@@ -12,7 +12,8 @@ Rating filters for the Rhythmbox library browser.
 === Usage ===
 
 To install, run 'install.sh' or copy the contents of the archive to 
-~/.local/share/rhythmbox/plugins/RatingFilters/.
+~/.local/share/rhythmbox/plugins/RatingFilters/ and run the command 
+sudo glib-compile-schemas "/usr/share/glib-2.0/schemas/".
 
 You can set a custom favourites threshold in the plugin preferences.
 
