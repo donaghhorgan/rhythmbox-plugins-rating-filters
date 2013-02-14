@@ -1,0 +1,42 @@
+Rating filters
+
+Rating filters for the Rhythmbox library browser.
+
+
+=== Dependencies ===
+
+  * rhythmbox		    >= 	2.97
+  * pygtk/gobject
+
+
+=== Usage ===
+
+To install, run the 'install.sh' file or copy the 'RatingFitlers' directory and 
+its contents to ~/.local/share/rhythmbox/plugins/.
+
+
+=== Thanks ===
+
+Preferences class code adapted from Magnatune plugin and CoverArt plugin.
+
+Copyright (C) 2006 Adam Zimmerman  <adam_zimmerman@sfu.ca>
+Copyright (C) 2006 James Livingston  <doclivingston@gmail.com>
+Copyright (C) 2012 - fossfreedom
+Copyright (C) 2012 - Agustin Carrasco
+
+
+=== Contact ===
+
+Donagh Horgan
+E-mail: donagh.horgan@gmail.com
+Website: http://www.donaghhorgan.com/projects/rhythmbox/
+
+
+=== Copyright ===
+
+Copyright (C) 2013 Donagh Horgan.
+
+
+=== License ===
+
+Licensed under GPLv3, see COPYING for more info.
