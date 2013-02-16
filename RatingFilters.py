@@ -237,7 +237,8 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 		entry_view = page.get_entry_view()
 		[column_name, sort_order] = entry_view.get_sorting_order()
 		entry_view.set_model(query_model)
-		entry_view.set_sorting_order(column_name, sort_order)
+		if column_name != None:
+			entry_view.set_sorting_order(column_name, sort_order)
 		
 		page.props.query_model = query_model
 
