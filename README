@@ -20,6 +20,8 @@ You can set a custom favourites threshold in the plugin preferences.
 
 === Thanks ===
 
+Thanks to fossfreedom for helpful suggestions!
+
 Preferences class code adapted from Magnatune plugin and CoverArt plugin.
 
 Copyright (C) 2006 Adam Zimmerman  <adam_zimmerman@sfu.ca>
