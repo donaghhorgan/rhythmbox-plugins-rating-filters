@@ -235,9 +235,9 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
         query_model = query_models[active_filter]
         entry_view = page.get_entry_view()
-        colsort = entry_view.get_sorting_type()
+        sorting_type = entry_view.get_sorting_type()
         entry_view.set_model(query_model)
-        entry_view.set_sorting_type(colsort)
+        entry_view.set_sorting_type(sorting_type)
         
         page.props.query_model = query_model
 
