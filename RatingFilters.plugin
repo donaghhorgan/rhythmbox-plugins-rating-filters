@@ -2,8 +2,9 @@
 Loader=python
 Module=RatingFilters
 IAge=2
+Depends=rb
 Name=Rating filters
 Description=Rating filters for the library browser.
 Authors=Donagh Horgan <donagh.horgan@gmail.com>
-Copyright=Copyright © 2012 Donagh Horgan
+Copyright=Copyright © 2013 Donagh Horgan
 Website=http://www.donaghhorgan.com/projects/rhythmbox/rating-filters/
