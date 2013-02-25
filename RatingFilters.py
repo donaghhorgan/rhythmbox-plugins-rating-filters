@@ -117,6 +117,25 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
         shell.set_data('RatingFiltersInfo', None)
 
 
+    def on_entry_change(self, db, entry, changes):
+        change = changes.values
+
+        if change.prop is RB.RhythmDBPropType.RATING:
+            for page in self.visited_pages:
+                [active_filter, query_models] = self.visited_pages[page]
+                query_model = query_models["All"]
+                entries = [row[0] for row in query_model]
+                if entry in entries:
+                    if "Favourites" in query_models:
+                        del query_models["Favourites"]
+                    if "Unrated" in query_models:
+                        del query_models["Unrated"]
+                    self.visited_pages[page] = [active_filter, query_models]
+
+            shell = self.object
+            self.on_page_change(None, shell.props.selected_page)
+
+
     def on_button_change(self, action, current):
         """Called when the UI is changed. Grabs query models and sets the active filter."""
         shell = self.object
@@ -136,9 +155,11 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
             self.visited_pages[page] = [active_filter, query_models]
             self.refresh(page)
         else:
+            # Check if first run
             if len(self.visited_pages) == 0:
                 shell.props.display_page_tree.connect("selected", self.on_page_change)
                 page.connect("filter-changed", self.on_browser_change)
+                shell.props.db.connect('entry-changed', self.on_entry_change)
 
             query_models = {}
             query_model = page.get_entry_view().props.model
@@ -181,7 +202,7 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
                 settings = Gio.Settings('org.gnome.rhythmbox.plugins.rating_filters')
                 t = settings['favourites-threshold']
 
-                if active_filter == "Favourites" and self.favourites_threshold != t:
+                if (active_filter == "Favourites" and self.favourites_threshold != t) or active_filter not in query_models:
                     query_models[active_filter] = self.filter_query_model(active_filter, query_models["All"])
                     self.visited_pages[page] = [active_filter, query_models]
 
