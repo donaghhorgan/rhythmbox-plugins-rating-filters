@@ -212,7 +212,7 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
         query_model = page.get_entry_view().props.model
 
         active_filter = "All"
-        query_models[active_filter] = query_models[active_filter] = self.filter_query_model(active_filter, query_model)
+        query_models[active_filter] = self.filter_query_model(active_filter, query_model)
 
         [active_filter, _, t] = self.visited_pages[page]
         query_models[active_filter] = self.filter_query_model(active_filter, query_model)
