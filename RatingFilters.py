@@ -95,15 +95,28 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
         self.visited_pages = {}
         self.radioactions = {"All": self.radioaction_all, "Favourites": self.radioaction_favourites, "Unrated": self.radioaction_unrated}
 
-        settings = Gio.Settings('org.gnome.rhythmbox.plugins.rating_filters')
-        self.favourites_threshold = settings['favourites-threshold']
+        self.settings = Gio.Settings('org.gnome.rhythmbox.plugins.rating_filters')
+        self.settings.connect("changed::favourites-threshold", self.on_favourites_threshold_changed)
+
+
+    def on_favourites_threshold_changed(self, settings, key):
+        """Refreshes the view when the favourites threshold preference is changed."""
+        shell = self.object
+        page = shell.props.selected_page
+
+        active_filter = ("All", "Favourites", "Unrated")[self.radioaction_all.get_current_value()]
+
+        if active_filter == "Favourites":
+            print "Favourites threshold changed, refreshing view on page " + page.props.name
+
+            self.on_button_change(self.radioaction_all, None)
 
 
     def do_deactivate(self):
         """Unlinks UI elements and resets entry views."""
         for page in self.visited_pages:
-            [_, query_models] = self.visited_pages[page]
-            self.visited_pages[page] = ["All", query_models]
+            [_, query_models, t] = self.visited_pages[page]
+            self.visited_pages[page] = ["All", query_models, t]
             self.refresh(page)
 
         shell = self.object
@@ -122,7 +135,7 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
         if change.prop is RB.RhythmDBPropType.RATING:
             for page in self.visited_pages:
-                [active_filter, query_models] = self.visited_pages[page]
+                [active_filter, query_models, t] = self.visited_pages[page]
                 query_model = query_models["All"]
                 entries = [row[0] for row in query_model]
                 if entry in entries:
@@ -130,7 +143,7 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
                         del query_models["Favourites"]
                     if "Unrated" in query_models:
                         del query_models["Unrated"]
-                    self.visited_pages[page] = [active_filter, query_models]
+                    self.visited_pages[page] = [active_filter, query_models, t]
 
             shell = self.object
             self.on_page_change(None, shell.props.selected_page)
@@ -145,14 +158,13 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
         print "Button changed to " + active_filter + " on page " + page.props.name
 
-        if page in self.visited_pages:
-            settings = Gio.Settings('org.gnome.rhythmbox.plugins.rating_filters')
-            t = settings['favourites-threshold']
+        t = self.settings['favourites-threshold']
 
-            [_, query_models] = self.visited_pages[page]
-            if active_filter not in query_models or (active_filter == "Favourites" and self.favourites_threshold != t):
+        if page in self.visited_pages:
+            [_, query_models, t0] = self.visited_pages[page]
+            if active_filter not in query_models or (active_filter == "Favourites" and t0 != t):
                 query_models[active_filter] = self.filter_query_model(active_filter, query_models["All"])
-            self.visited_pages[page] = [active_filter, query_models]
+            self.visited_pages[page] = [active_filter, query_models, t]
             self.refresh(page)
         else:
             # Check if first run
@@ -167,7 +179,7 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
             query_models["All"] = self.filter_query_model("All", query_model)
             query_models[active_filter] = self.filter_query_model(active_filter, query_model)
 
-            self.visited_pages[page] = [active_filter, query_models]
+            self.visited_pages[page] = [active_filter, query_models, t]
             self.refresh(page)
 
 
@@ -184,10 +196,10 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
         active_filter = "All"
         query_models[active_filter] = query_models[active_filter] = self.filter_query_model(active_filter, query_model)
 
-        [active_filter, _] = self.visited_pages[page]
+        [active_filter, _, t] = self.visited_pages[page]
         query_models[active_filter] = self.filter_query_model(active_filter, query_model)
 
-        self.visited_pages[page] = [active_filter, query_models]
+        self.visited_pages[page] = [active_filter, query_models, t]
         self.refresh(page)
 
 
@@ -195,16 +207,16 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
         """Called when the display page changes. Grabs query models and sets the active filter."""
         print "Page changed to " + page.props.name
         shell = self.object
+
+        t = self.settings['favourites-threshold']
+
         if type(page) == RB.PlaylistSource or type(page) == RB.AutoPlaylistSource or page == shell.props.library_source:
             if page in self.visited_pages:
-                [active_filter, query_models] = self.visited_pages[page]
+                [active_filter, query_models, t0] = self.visited_pages[page]
 
-                settings = Gio.Settings('org.gnome.rhythmbox.plugins.rating_filters')
-                t = settings['favourites-threshold']
-
-                if (active_filter == "Favourites" and self.favourites_threshold != t) or active_filter not in query_models:
+                if (active_filter == "Favourites" and t0 != t) or active_filter not in query_models:
                     query_models[active_filter] = self.filter_query_model(active_filter, query_models["All"])
-                    self.visited_pages[page] = [active_filter, query_models]
+                    self.visited_pages[page] = [active_filter, query_models, t]
 
                 self.radioactions[active_filter].set_active(True)
                 self.refresh(page)
@@ -215,7 +227,7 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
                 active_filter = "All"               
                 query_models[active_filter] = self.filter_query_model(active_filter, query_model)
 
-                self.visited_pages[page] = [active_filter, query_models]
+                self.visited_pages[page] = [active_filter, query_models, t]
                 self.radioactions[active_filter].set_active(True)
                 page.connect("filter-changed", self.on_browser_change)
 
@@ -232,10 +244,9 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
             new_query_model = query_model
         else:
             if active_filter == "Favourites":
-                ratings = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]    
-                settings = Gio.Settings('org.gnome.rhythmbox.plugins.rating_filters')
-                self.favourites_threshold = settings['favourites-threshold']
-                ratings = ratings[self.favourites_threshold:]
+                ratings = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+                t = self.settings['favourites-threshold']
+                ratings = ratings[t:]
             else:
                 ratings = [0.0]
 
@@ -250,7 +261,7 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
     def refresh(self, page):
         """Refreshes the entry view on the specified page."""
-        [active_filter, query_models] = self.visited_pages[page]
+        [active_filter, query_models, t] = self.visited_pages[page]
 
         print "Applying '" + active_filter + "' to " + page.props.name
 
