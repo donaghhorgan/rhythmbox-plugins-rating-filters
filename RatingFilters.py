@@ -27,7 +27,7 @@
 from gi.repository import GObject, RB, Peas, Gtk, GLib, Gio, PeasGtk
 import rb
 
-ui_str = """
+ui_str = '''
 <ui>
   <toolbar name="LibrarySourceToolBar">
     <placeholder name="PluginPlaceholder"/>
@@ -50,11 +50,13 @@ ui_str = """
     <toolitem name="FilterUnrated" action="FilterUnrated"/>
   </toolbar>
 </ui>
-"""
+'''
 
 class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
     '''
-    Main class for the RatingFilters plugin. Contains functions for setting up the UI, callbacks for user actions, and functions for filtering query models and refreshing the display.
+    Main class for the RatingFilters plugin. Contains functions for setting 
+    up the UI, callbacks for user actions, and functions for filtering query 
+    models and refreshing the display.
     '''
     object = GObject.property (type = GObject.Object)
 
@@ -64,7 +66,9 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 
     def do_activate(self):
-        """Creates and links UI elements and creates class variables."""
+        '''
+        Creates and links UI elements and creates class variables.
+        '''
         data = dict()
         shell = self.object
         manager = shell.props.ui_manager
@@ -100,7 +104,9 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 
     def on_favourites_threshold_changed(self, settings, key):
-        """Refreshes the view when the favourites threshold preference is changed."""
+        '''
+        Refreshes the view when the favourites threshold preference is changed.
+        '''
         shell = self.object
         page = shell.props.selected_page
 
@@ -113,7 +119,9 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 
     def do_deactivate(self):
-        """Unlinks UI elements and resets entry views."""
+        '''
+        Unlinks UI elements and resets entry views.
+        '''
         for page in self.visited_pages:
             [_, query_models, t] = self.visited_pages[page]
             self.visited_pages[page] = ["All", query_models, t]
@@ -131,6 +139,11 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 
     def on_entry_change(self, db, entry, changes):
+        '''
+        Called when an entry in the current view is changed. If the user has changed 
+        a track's rating, and the new rating should be filtered out, then the page
+        is refreshed.
+        '''
         change = changes.values
 
         if change.prop is RB.RhythmDBPropType.RATING:
@@ -150,7 +163,9 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 
     def on_button_change(self, action, current):
-        """Called when the UI is changed. Grabs query models and sets the active filter."""
+        '''
+        Called when the UI is changed. Grabs query models and sets the active filter.
+        '''
         shell = self.object
         page = shell.props.selected_page
 
@@ -184,7 +199,10 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 
     def on_browser_change(self, action):
-        """Called when the library browser for a visited page changes. Reapplies the active filter to the new query model."""
+        '''
+        Called when the library browser for a visited page changes. Reapplies the active 
+        filter to the new query model.
+        '''
         shell = self.object
         page = shell.props.selected_page
 
@@ -204,7 +222,10 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 
     def on_page_change(self, display_page_tree, page):
-        """Called when the display page changes. Grabs query models and sets the active filter."""
+        '''
+        Called when the display page changes. Grabs query models and sets the active 
+        filter.
+        '''
         print "Page changed to " + page.props.name
         shell = self.object
 
@@ -233,7 +254,9 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 
     def filter_query_model(self, active_filter, query_model):
-        """Applies the active filter to the supplied query model and returns the result."""
+        '''
+        Applies the active filter to the supplied query model and returns the result.
+        '''
         print "Creating new query model for " + active_filter
 
         shell = self.object
@@ -260,7 +283,9 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 
     def refresh(self, page):
-        """Refreshes the entry view on the specified page."""
+        '''
+        Refreshes the entry view on the specified page.
+        '''
         [active_filter, query_models, t] = self.visited_pages[page]
 
         print "Applying '" + active_filter + "' to " + page.props.name
@@ -277,8 +302,8 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
 
 class Preferences(GObject.Object, PeasGtk.Configurable):
     '''
-    Preferences for the RatingFilters plugin. It holds the settings for
-    the plugin and also is the responsible of creating the preferences dialog.
+    Preferences for the RatingFilters plugin. It holds the settings for the 
+    plugin and also is the responsible of creating the preferences dialog.
     '''
     __gtype_name__ = 'RatingFiltersPreferences'
     object = GObject.property(type=GObject.Object)
