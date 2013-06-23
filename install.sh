@@ -10,7 +10,17 @@ rm -rf $PLUGIN_PATH
 mkdir -p $PLUGIN_PATH
 cp -r "${SCRIPT_PATH}"* "$PLUGIN_PATH"
 rm "${PLUGIN_PATH}${SCRIPT_NAME}"
+
+echo "Need sudo to install settings schema."
 sudo cp "${PLUGIN_PATH}${GLIB_SCHEME}" "${GLIB_PATH}"
 rm "${PLUGIN_PATH}${GLIB_SCHEME}"
-
 sudo glib-compile-schemas "$GLIB_PATH"
+
+if [ -n "$1" ]
+then
+    if [ $1 == "-d" ]
+    then
+        eval "clear"
+        eval "rhythmbox -D RatingFilters"
+    fi
+fi
