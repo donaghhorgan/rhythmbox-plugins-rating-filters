@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema path="/org/gnome/rhythmbox/plugins/rating_filters/" id="org.gnome.rhythmbox.plugins.rating_filters">
+        <key type="i" name="favourites-threshold">
+            <default>4</default>
+            <summary>Favourites rating filter threshold.</summary>
+            <description>The rating threshold to use when when the Favourites filter is active.</description>
+        </key>
+    </schema>
+</schemalist>
