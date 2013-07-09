@@ -5,15 +5,14 @@ Rating filters for the Rhythmbox library browser.
 
 === Dependencies ===
 
-  * rhythmbox		    >= 	2.97
-  * pygtk/gobject
+  * rhythmbox		    >= 	2.95
 
 
 === Usage ===
 
-To install, run 'install.sh' or copy the contents of the archive to 
-~/.local/share/rhythmbox/plugins/RatingFilters/ and run the command 
-sudo glib-compile-schemas "/usr/share/glib-2.0/schemas/".
+To install the plugin, run install.py. If you have problems, try running 
+'install.py -l' in a terminal and select the version of Rhythmbox you have 
+installed.
 
 You can set a custom favourites threshold in the plugin preferences.
 
