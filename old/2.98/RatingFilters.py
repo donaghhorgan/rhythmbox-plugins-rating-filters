@@ -69,7 +69,6 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
         '''
         Creates and links UI elements and creates class variables.
         '''
-        data = dict()
         shell = self.object
         manager = shell.props.ui_manager
 
@@ -82,18 +81,16 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
         self.radioaction_favourites.join_group(self.radioaction_all)
         self.radioaction_unrated.join_group(self.radioaction_all)
 
-        data['action_group'] = Gtk.ActionGroup('RatingFiltersActions')
-        data['action_group'].add_action(self.radioaction_all)
-        data['action_group'].add_action(self.radioaction_favourites)
-        data['action_group'].add_action(self.radioaction_unrated)
+        self.action_group = Gtk.ActionGroup('RatingFiltersActions')
+        self.action_group.add_action(self.radioaction_all)
+        self.action_group.add_action(self.radioaction_favourites)
+        self.action_group.add_action(self.radioaction_unrated)
 
         self.radioaction_all.connect('changed', self.on_button_change)
                 
-        manager.insert_action_group(data['action_group'], 0)
-        data['ui_id'] = manager.add_ui_from_string(ui_str)
+        manager.insert_action_group(self.action_group, 0)
+        self.ui_id = manager.add_ui_from_string(ui_str)
         manager.ensure_update()
-
-        shell.set_data('RatingFiltersInfo', data)
 
         # Class variables
         self.visited_pages = {}
@@ -128,14 +125,11 @@ class RatingFiltersPlugin (GObject.Object, Peas.Activatable):
             self.refresh(page)
 
         shell = self.object
-        data = shell.get_data('RatingFiltersInfo')
 
         manager = shell.props.ui_manager
-        manager.remove_ui(data['ui_id'])
-        manager.remove_action_group(data['action_group'])
+        manager.remove_ui(self.ui_id)
+        manager.remove_action_group(self.action_group)
         manager.ensure_update()
-
-        shell.set_data('RatingFiltersInfo', None)
 
 
     def on_entry_change(self, db, entry, changes):
